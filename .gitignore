@@ -1,0 +1,16 @@
+# Root
+__pycache__/
+*.py[cod]
+.env
+.env.local
+scan_results/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
