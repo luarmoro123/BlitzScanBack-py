@@ -14,3 +14,4 @@ scan_results/
 # OS
 .DS_Store
 Thumbs.db
+tools/bin/
