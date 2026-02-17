@@ -1,0 +1,32 @@
+# =============================================
+# Ignorar código fuente clonado de las herramientas
+# (Son repos externos, se clonan con git clone)
+# =============================================
+subfinder/
+amass/
+masscan/
+rustscan/
+nmap/
+httpx/
+WhatWeb/
+nuclei/
+ffuf/
+testssl.sh/
+
+# Build artifacts
+*/build/
+*/dist/
+*/target/
+
+# Pero SÍ incluir nuestros archivos:
+# - bin/          (binarios descargados)
+# - *.py          (scripts propios)
+# - *.md          (documentación)
+# - .gitignore
+
+# IDE / OS
+**/.vscode/
+**/.idea/
+**/.DS_Store
+**/Thumbs.db
+
