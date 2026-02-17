@@ -104,6 +104,9 @@ def extract_binary(archive_path: Path, binary_name: str, dest_dir: Path) -> bool
 #  Herramientas y sus releases de GitHub
 # ═══════════════════════════════════════════════════
 
+# Mapear OS/Arch a los nombres que usa cada release de GitHub
+_RUSTSCAN_OS = {"windows": "x86_64-windows", "linux": "x86_64-linux", "darwin": "x86_64-macos"}
+
 TOOLS = {
     "subfinder": {
         "repo": "projectdiscovery/subfinder",
@@ -117,17 +120,11 @@ TOOLS = {
         "keywords": [OS_NAME, ARCH],
         "description": "Mapeo de red y descubrimiento de activos",
     },
-    "masscan": {
-        "repo": "robertdavidgraham/masscan",
-        "binary": f"masscan{EXE}",
-        "keywords": [OS_NAME] if IS_WINDOWS else ["linux"],
-        "description": "Escáner masivo de puertos",
-    },
     "rustscan": {
         "repo": "RustScan/RustScan",
         "binary": f"rustscan{EXE}",
-        "keywords": ["windows" if IS_WINDOWS else "linux", "64"],
-        "description": "Escáner rápido de puertos (Rust)",
+        "keywords": [_RUSTSCAN_OS.get(OS_NAME, "x86_64-linux"), "rustscan"],
+        "description": "Escáner rápido de puertos (reemplaza masscan en Windows)",
     },
     "nuclei": {
         "repo": "projectdiscovery/nuclei",
@@ -231,6 +228,19 @@ def download_tool(name: str) -> bool:
     if binary_path.exists():
         size_mb = binary_path.stat().st_size / (1024 * 1024)
         print(f"  ✅ Descargado exitosamente: bin/{tool['binary']} ({size_mb:.1f} MB)")
+
+        # Verificar si el antivirus lo elimina después de unos segundos
+        if IS_WINDOWS:
+            import time
+            time.sleep(3)
+            if not binary_path.exists():
+                print(f"  ⚠ ANTIVIRUS: Windows Defender eliminó {tool['binary']}")
+                print(f"    Windows Defender detecta herramientas de seguridad como amenazas.")
+                print(f"    Para solucionarlo, abre PowerShell como Administrador y ejecuta:")
+                print(f"    Add-MpPreference -ExclusionPath \"{BIN_DIR}\"")
+                print(f"    Después vuelve a ejecutar este script.")
+                return False
+
         return True
     else:
         # Buscar si se extrajo con otro nombre
@@ -241,6 +251,7 @@ def download_tool(name: str) -> bool:
                 return True
         print(f"  ❌ Binario no encontrado después de extraer")
         return False
+
 
 
 def check_all():
